@@ -1,12 +1,11 @@
-from sqlalchemy import Table, Column, Integer, String, TIMESTAMP, MetaData, Float
+from sqlalchemy import Table, Column, Integer, String, TIMESTAMP, MetaData
 
 metadata = MetaData()
 
 price = Table(
     "price",
     metadata,
-    Column("id", Integer, primary_key=True),
-    Column("article", String),
-    Column("price", Float),
+    Column("article", String, primary_key=True),
+    Column("price", String),
     Column("date", TIMESTAMP),
 )

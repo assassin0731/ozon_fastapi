@@ -71,24 +71,8 @@ def enter_key(key: str, client_id: str):
 @app.post('/home/load_stock')
 async def upload_file(file: UploadFile = File(...)):
     contents = await file.read()
-    try:
-        if not file.filename.endswith(('xls', 'xlsx')):
-            raise WrongFile('Not Excel file')
-
-        shop_stock = pd.read_excel(contents, header=5)
-        if 'Катал. номер' not in shop_stock or 'НГЛ' not in shop_stock:
-            raise WrongFile('Wrong Excel File')
-        shop_stock['article'] = shop_stock.pop('Катал. номер')
-        shop_stock['count'] = shop_stock.pop('НГЛ')
-        stock = stock_dict['goods']
-
-        stock.shop_stock = dict()
-        for art, count in zip(shop_stock['article'], shop_stock['count']):
-            if str(art).startswith(needed_art) and len(art) <= 10:
-                stock.shop_stock[art] = count
-    except Exception as e:
-        return {'status': 403, 'error': str(e)}
-    return {'status': 200, 'data': stock.shop_stock}
+    upload_excel(file, contents)
+    return {'status': 200, 'data': stock_dict.shop_stock}
 
 
 @app.get('/honme/out_of_stock_shop')

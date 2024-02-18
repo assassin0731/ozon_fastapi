@@ -92,4 +92,28 @@ def get_sales_data(func):
     return goods_with_id, goods_in_sale
 
 
+def upload_excel(file, contents):
+    try:
+        if not file.filename.endswith(('xls', 'xlsx')):
+            raise WrongFile('Not Excel file')
+
+        shop_stock = pd.read_excel(contents, header=5)
+        if 'Катал. номер' not in shop_stock or 'НГЛ' not in shop_stock or 'ОПТ' not in shop_stock:
+            raise WrongFile('Wrong Excel File')
+        shop_stock['article'] = shop_stock.pop('Катал. номер')
+        shop_stock['count'] = shop_stock.pop('НГЛ')
+        shop_stock['price'] = shop_stock.pop('ОПТ')
+        try:
+            stock = stock_dict['goods']
+        except KeyError:
+            stock = Goods()
+
+        stock.shop_stock = dict()
+        for art, count, price in zip(shop_stock['article'], shop_stock['count'], shop_stock['price']):
+            if str(art).startswith(needed_art) and len(art) <= 10:
+                stock.shop_stock[art] = (count, price)
+    except Exception as e:
+        return {'status': 403, 'error': str(e)}
+    return stock.shop_stock
+
 needed_art = ('JSL', 'JBP', 'JAA', 'JAS', 'JDW', 'JSB', 'JDA', 'JFM', 'JPP', 'JDK', 'JBS', 'JSR', 'JPS')
