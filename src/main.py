@@ -10,6 +10,7 @@ from auth.schemas import UserRead, UserCreate
 from funcs import *
 
 from operations.router import router as router_operation
+from operations.orders import order as order_operation
 
 
 app = FastAPI(
@@ -34,6 +35,7 @@ app.include_router(
 )
 
 app.include_router(router_operation)
+app.include_router(order_operation)
 current_user = fastapi_users.current_user()
 
 

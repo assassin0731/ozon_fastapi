@@ -1,12 +1,12 @@
 import datetime
 
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, requests
 from fastapi_users.schemas import model_dump
 from sqlalchemy import select, insert, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
-from funcs import upload_excel, stock_dict
+from funcs import upload_excel, stock_dict, headers, orders
 from operations.models import price
 from operations.schemas import Price
 
@@ -40,3 +40,5 @@ async def upload_prices(file: UploadFile = File(...), session: AsyncSession = De
         await session.execute(stmt)
     await session.commit()
     return {"status": "success"}
+
+

@@ -26,6 +26,20 @@ headers = {
     "Content-Type": "application/json"
 }
 
+orders = {
+    "dir": "ASC",
+    "filter": {
+        "since": None,
+        "status": "awaiting_packaging",
+        "to": None,
+        "warehouse_id": [
+            "1020000673766000"
+        ]
+    },
+    "limit": 1000,
+    "offset": 0
+}
+
 
 def load_ozon_stock(id_code):
     """Выгрузка товаров из ЛК Ozon-Seller"""
@@ -115,5 +129,6 @@ def upload_excel(file, contents):
     except Exception as e:
         return {'status': 403, 'error': str(e)}
     return stock.shop_stock
+
 
 needed_art = ('JSL', 'JBP', 'JAA', 'JAS', 'JDW', 'JSB', 'JDA', 'JFM', 'JPP', 'JDK', 'JBS', 'JSR', 'JPS')
