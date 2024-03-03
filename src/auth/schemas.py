@@ -5,13 +5,14 @@ from fastapi_users.schemas import PYDANTIC_V2
 
 
 class UserRead(schemas.BaseUser[int]):
-    id: int
     username: str
     email: str
     role_id: int
-    is_active: bool = True
-    is_superuser: bool = False
-    is_verified: bool = False
+    client_id: int
+    api_key: str
+    is_active: Optional[bool] = True
+    is_superuser: Optional[bool] = False
+    is_verified: Optional[bool] = False
 
     if PYDANTIC_V2:  # pragma: no cover
         model_config = ConfigDict(from_attributes=True)  # type: ignore

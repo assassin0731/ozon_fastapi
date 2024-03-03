@@ -18,7 +18,7 @@ user = Table(
     Column("username", String, nullable=False),
     Column("email", String, nullable=False),
     Column("hashed_password", String, nullable=False),
-    Column("client_id", String, nullable=False),
+    Column("client_id", Integer, nullable=False),
     Column("api_key", String, nullable=False),
     Column("registered_at", TIMESTAMP, default=datetime.datetime.utcnow),
     Column("role_id", Integer, ForeignKey(role.c.id)),

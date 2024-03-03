@@ -18,5 +18,6 @@ def get_today_orders():
     now = datetime.date.today()
     json_data["filter"]["since"] = f"{now -datetime.timedelta(days=1)}T02:00:00.000Z"
     json_data["filter"]["to"] = f"{now}T02:00:00.000Z"
-    today_orders = requests.post(get_url, headers=headers, json=json_data).json()
+    today_orders = requests.post(get_url, headers=headers, json=json_data).json()['result']
+
     return {'status': 200, 'data': today_orders}
