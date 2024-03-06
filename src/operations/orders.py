@@ -2,12 +2,14 @@ import datetime
 
 import requests
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
+from fastapi_users.schemas import model_dump
+from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_async_session
 from funcs import orders, headers
-from operations.models import price
+from operations.models import price, order_table
+from operations.schemas import Order
 
 order = APIRouter(
     prefix="/orders",
@@ -41,5 +43,18 @@ async def get_today_orders(session: AsyncSession = Depends(get_async_session)):
                     str(round(float(prices[good['offer_id']]) * good['quantity'], 2))
             else:
                 new_orders[td['posting_number']][good['offer_id']]['price'] = None
+                new_orders[td['posting_number']][good['offer_id']]['total'] = None
     return {'status': 200, 'data': new_orders}
 
+
+@order.post("/")
+async def load_today_orders(session: AsyncSession = Depends(get_async_session)):
+    new_orders = await get_today_orders(session)
+    for no in new_orders['data'].keys():
+        for art, vals in new_orders['data'][no].items():
+            cur_order = Order(id=no, article=art, quantity=vals['quantity'], price=vals['price'], total=vals['total'],
+                              order_date=datetime.datetime.now(), earnings=None, arrive_date=None)
+            stmt = insert(order_table).values(model_dump(cur_order))
+            await session.execute(stmt)
+    await session.commit()
+    return {"status": "success"}

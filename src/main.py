@@ -139,6 +139,8 @@ async def update_prices(file: UploadFile = File(...)):
         shop_stock['price'] = shop_stock.pop('ОПТ')
 
         shop_prices = dict()
+        articles = set(stock_dict['goods'].oz_goods.keys())
+
         for art, price in zip(shop_stock['article'], shop_stock['price']):
             if str(art).startswith(needed_art):
                 if str(art).startswith("JPS"):
@@ -146,13 +148,13 @@ async def update_prices(file: UploadFile = File(...)):
                     shop_prices[str(art) + '_2'] = ceil(price) * 2
                     shop_prices[str(art) + '_4'] = ceil(price) * 4
                 else:
+                    if str(art) + '_1' in articles:
+                        shop_prices[str(art) + '_1'] = ceil(price)
                     shop_prices[str(art)] = ceil(price)
 
         json_data = {
             "prices": []
         }
-
-        articles = set(stock_dict['goods'].oz_goods.keys())
 
         for art, price in shop_prices.items():
             if art in articles:
